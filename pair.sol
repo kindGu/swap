@@ -64,9 +64,14 @@ contract Pair is iPair, ERC20 {
     }
     function mint(address to) external lock returns (uint liquidity) {
         (uint _reserve0, uint _reserve1,) = getReserves();
+        uint balance0 = IERC20(token0).balanceOf(address(this));
+        uint balance1 = IERC20(token1).balanceOf(address(this));
+        uint amount0 = balance0.sub(_reserve0);
+        uint amount1 = balance1.sub(_reserve1);
+        
         uint _totalSupply = totalSupply;
         if (_totalSupply == 0) {
-        _mint(address(0), MINIMUM_LIQUIDITY); 
+            _mint();
         }
     }
 }
