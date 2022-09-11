@@ -55,7 +55,6 @@ function output(uint amount, uint reservein, uint reserveout)returns(uint){
 
 (rootK - rootKLast) / (5rootk + rootKLast)
 
-
   {
   ∆ = rootK - rootKLast 
   lp/lp_supply = (∆/6) / [(∆5/6) + rootKLast]
