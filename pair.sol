@@ -11,12 +11,9 @@ contract Pair is iPair, ERC20 {
     address public factory;
     address public token0;
     address public token1;
-    
+    uint public constant MINIMUM_LIQUIDITY = 10**3;
     uint private reserve0;
     uint private reserve1;
-    
-    uint public price0CumulativeLast;
-    uint public price1CumulativeLast;
     uint public kLast;
     //更新
     
@@ -31,6 +28,14 @@ contract Pair is iPair, ERC20 {
         address indexed to
     );
     event Sync(uint112 reserve0, uint112 reserve1); 
+    
+    uint private unlocked = 1;
+    modifier lock() {//锁
+        require(unlocked == 1, 'UniswapV2: LOCKED');
+        unlocked = 0;
+        _;
+        unlocked = 1;
+    }
     
      constructor() public {
         factory = msg.sender;
@@ -49,8 +54,19 @@ contract Pair is iPair, ERC20 {
     function _safeTransfer(address token, address to, uint value) private {
         require(token != address(0), "token is 0x0");
         require(to != address(0), "to is 0x0");
-        
-        IERC20(token).Transfer(address(0), to, value);
-        //判断成功与否
+        asser(IERC20(token).Transfer(address(0), to, value));
+    }
+    function setReserves(uint balance0, uint balance1) private {
+        require(balance0 <= uint(-1) && balance1 <= uint(-1), 'error: overflow');
+        reserve0 = uint(balance0);
+        reserve1 = uint(balance1);
+        emit Sync(reserve0, reserve1);
+    }
+    function mint(address to) external lock returns (uint liquidity) {
+        (uint _reserve0, uint _reserve1,) = getReserves();
+        uint _totalSupply = totalSupply;
+        if (_totalSupply == 0) {
+        _mint(address(0), MINIMUM_LIQUIDITY); 
+        }
     }
 }
