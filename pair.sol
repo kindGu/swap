@@ -97,8 +97,40 @@ contract Pair is iPair, ERC20 {
         _mint(to, liquidity);
         
         setReserves(balance0, balance1);
-        if (feeOn) kLast = uint(reserve0).mul(reserve1);
+        kLast = uint(reserve0).mul(reserve1);
         //更新储备
         emit Mint(msg.sender, amount0, amount1);
+    }
+    function burn(address to) external lock returns (uint amount0, uint amount1) {
+        (uint _reserve0, uint _reserve1,) = getReserves(); 
+        address _token0 = token0;
+        address _token1 = token1; 
+        uint balance0 = IERC20(_token0).balanceOf(address(this));
+        uint balance1 = IERC20(_token1).balanceOf(address(this));
+        uint liquidity = balanceOf[address(this)];
+        
+        uint _totalSupply = totalSupply;
+        amount0 = liquidity.mul(balance0) / _totalSupply;
+        amount1 = liquidity.mul(balance1) / _totalSupply;
+        require(amount0 > 0 && amount1 > 0, 'error: burn token inadequate');
+        _burn(address(this), liquidity);
+        _safeTransfer(_token0, to, amount0);
+        _safeTransfer(_token1, to, amount1);
+        balance0 = IERC20(_token0).balanceOf(address(this));
+        balance1 = IERC20(_token1).balanceOf(address(this));
+        
+        setReserves(balance0, balance1);
+        kLast = uint(reserve0).mul(reserve1);
+        emit Burn(msg.sender, amount0, amount1, to);
+    }
+    function swap(uint amount0Out, uint amount1Out, address to) external lock {
+        require(amount0Out > 0 || amount1Out > 0, 'error: Not enough output tokens');
+        (uint112 _reserve0, uint112 _reserve1,) = getReserves(); // gas savings
+        require(amount0Out < _reserve0 && amount1Out < _reserve1, 'error: Insufficient flow cell');
+        
+        uint balance0;
+        uint balance1;
+        
+        
     }
 }
