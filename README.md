@@ -53,7 +53,6 @@ function output(uint amount, uint reservein, uint reserveout)returns(uint){
 即 在所有的0.3%手续费中抽取1/6提取给团队, 剩下的交由流动提供者(返还LP token)
 在添加/消除流动池之前, 都需要先将手续费进行结清
 
-
 (rootK - rootKLast) / (5rootk + rootKLast)
 
 
@@ -66,7 +65,22 @@ function output(uint amount, uint reservein, uint reserveout)returns(uint){
   kLast = uint(reserve0).mul(reserve1);//更为节省gas
   cumulatedFee += ( sqrt(reserve0 * reserve1) - rootKBefore );
   }
+  
+如何计算发放给团队的手续费数量
+由于在每一笔的swap上，手续费都会累次增加（ √k ），
+而对比 t1 与 t2 时刻的 √k1 和 √k2 ,其差值就是 t1 与 t2 时刻的手续费，
+则在某一时间段 （t1, t2） 手续费就得出
 
+f(t1,t2) = (√k2 - √k1) / √k2
+
+而当在 t2 时刻时，LPtoken的总供应量为 S1 ,需要发放给团队的为S
+由于 发送给团队的LPtoken是先于 mint与burn 之前的，
+
+f(t1,t2) * r = S / (S + S1)
+
+所以，发放给团队的手续费为： 
+
+S =  (√k2 - √k1) 
 
 添加流动池
 (第一次添加流动池 与 除第一笔添加流动池 的情况)
