@@ -1,4 +1,27 @@
-# swap   
+# swap
+
+**Router  --(调用)-->  Factory  --(创建)-->  Piar  --(引用)-->  ERC20**
+
+**Router**
+* SWAP
+* SWAP ETH
+* Add/remove 流动池
+* Add/remove ETH流动池
+
+**Factory**
+* createPiar
+
+**Piar**
+* mint
+* burn
+* update
+* skny
+
+**Ticket**
+* getTicket
+* random
+* transfer
+
 
 ## X * Y = k
 交易前后 两个代币数量乘积不变, 
@@ -114,3 +137,20 @@ S =  (√k2 - √k1) / ( (1 / r) * (√k2 + √k1) ) * S1
 S = min(amount0 * totaSupply / reserue0, amount1 * totaSupply / reserue1;
 ```
 
+## 彩票
+通过添加流动性获取LPtoken 由LPtoken的数量分配数字
+
+```
+function getTicket(uint amount) public view returns(uint){
+  return (amount % 5);
+}
+```
+
+随机数的产生  范围 0 至 number
+
+```
+function random(uint number) public view returns(uint) {
+    return uint(keccak256(abi.encodePacked(block.timestamp,block.difficulty,  
+        msg.sender))) % number;
+}
+```
