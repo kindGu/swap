@@ -89,6 +89,16 @@ contract Pair is iPair, ERC20 {
         uint _totalSupply = totalSupply;
         if (_totalSupply == 0) {
             _mint();
+        } else {
+            liquidity = Math.min(amount0.mul(_totalSupply) / _reserve0, amount1.mul(_totalSupply) / _reserve1);
+            //S = min(amount0 * totaSupply / reserue0, amount1 * totaSupply / reserue1;
         }
+        require(liquidity > 0, 'error: liquidity Less than zero');
+        _mint(to, liquidity);
+        
+        setReserves(balance0, balance1);
+        if (feeOn) kLast = uint(reserve0).mul(reserve1);
+        //更新储备
+        emit Mint(msg.sender, amount0, amount1);
     }
 }
