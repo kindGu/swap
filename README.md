@@ -141,7 +141,7 @@ S = min(amount0 * totaSupply / reserue0, amount1 * totaSupply / reserue1;
 通过添加流动性获取LPtoken 由LPtoken的数量分配数字
 
 ```
-function getTicket(uint amount) public view returns(uint){
+function getTicketamount(uint amount) public view returns(uint){
   return (amount % 5);
 }
 ```
