@@ -1,6 +1,6 @@
 # swap   
 
-X * Y = k
+## X * Y = k
 交易前后 两个代币数量乘积不变
 
 
@@ -65,7 +65,7 @@ function output(uint amount, uint reservein, uint reserveout)returns(uint){
   cumulatedFee += ( sqrt(reserve0 * reserve1) - rootKBefore );
   }
   
-如何计算发放给团队的手续费数量
+## 如何计算发放给团队的手续费数量
 由于在每一笔的swap上，手续费都会累次增加（ √k ），
 而对比 t1 与 t2 时刻的 √k1 和 √k2 ,其差值就是 t1 与 t2 时刻的手续费，
 则在某一时间段 （t1, t2） 手续费就得出
@@ -83,7 +83,7 @@ S =  (√k2 - √k1) / ( (1 / r) * (√k2 + √k1) ) * S1
 
 //将所有手续费的一半分给流动提供者, 余下一半的其中一部分作为彩票奖池
 
-添加流动池
+## 添加流动池
 (第一次添加流动池 与 除第一笔添加流动池 的情况)
 在第一次添加时, 为了避免损失, 需要依照当时两币的市价比去提供相应的价值(数量* 价格)
 添加流动池后，返回的为LP token，而mint触发是Router通过factory向pair发送代币之后，中间是有一次gas损失，
