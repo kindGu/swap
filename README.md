@@ -140,7 +140,7 @@ S = min(amount0 * totaSupply / reserue0, amount1 * totaSupply / reserue1;
 ## 彩票
 彩票池使用团队获取手续费池的一部分
 
-**swap 的手续费 0.03%** 
+**swap 的手续费 0.3%** 
 
 所获得的所有手续费将按照 **1/2** 分给团队和流动池提供者
 
