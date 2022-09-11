@@ -15,7 +15,7 @@
 * mint
 * burn
 * update
-* skny
+* sync
 
 **Ticket**
 * getTicket
