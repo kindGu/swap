@@ -71,3 +71,14 @@ function output(uint amount, uint reservein, uint reserveout)returns(uint){
 添加流动池
 (第一次添加流动池 与 除第一笔添加流动池 的情况)
 在第一次添加时, 为了避免损失, 需要依照当时两币的市价比去提供相应的价值(数量* 价格)
+添加流动池后，返回的为LP token，而mint触发是Router通过factory向pair发送代币之后，中间是有一次gas损失，
+所以合约的储备量和合约的token不相等，中间的差值就是要mint 的token数量
+即，amount0 和amount1 ，随后则需要进行收取手续费
+
+第一次添加流动池： S = √（∆x * ∆y） = √k
+1 tokenA = 100 tokenB
+存入2tokenA + 200tokenB = 20 LPtoken 
+可以防止抬高流动性单价从而垄断交易对
+
+除第一次添加流动池： S = min(amount0 * totaSupply / reserue0, amount1 * totaSupply / reserue1;
+
