@@ -62,6 +62,16 @@ contract Pair is iPair, ERC20 {
         reserve1 = uint(balance1);
         emit Sync(reserve0, reserve1);
     }
+    
+    function _mintFee(uint112 _reserve0, uint112 _reserve1) private{
+        address feeTo = IFactory(factory).feeTo();
+        uint _kLast = kLast;
+        if (_kLast != 0) {
+            uint rootK = Math.sqrt(uint(_reserve0).mul(_reserve1));
+            uint rootKLast = Math.sqrt(_kLast);
+        }
+    }
+    
     function mint(address to) external lock returns (uint liquidity) {
         (uint _reserve0, uint _reserve1,) = getReserves();
         uint balance0 = IERC20(token0).balanceOf(address(this));
