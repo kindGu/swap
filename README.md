@@ -137,6 +137,18 @@ S =  (√k2 - √k1) / ( (1 / r) * (√k2 + √k1) ) * S1
 S = min(amount0 * totaSupply / reserue0, amount1 * totaSupply / reserue1;
 ```
 
+## SWAP
+swap函数实现两种代币的兑换，在一个交易池内有两个方向的swap,
+可以从TokenA换到TokenB，或者TokenB换到TokenA。
+
+getAmountOut确定需要兑换的金额， 
+
+在不做swap之前，balance应该和reserve相等的。
+通过balance和reserve的差值，可以反推出输入的代币数量
+```
+uint amount0In = balance0 > _reserve0 - amount0Out ? balance0 - (_reserve0 - amount0Out) : 0;
+uint amount1In = balance1 > _reserve1 - amount1Out ? balance1 - (_reserve1 - amount1Out) : 0;
+```
 ## 彩票
 彩票池使用团队获取手续费池的一部分
 
