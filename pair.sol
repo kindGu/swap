@@ -31,7 +31,7 @@ contract Pair is iPair, ERC20 {
     
     uint private unlocked = 1;
     modifier lock() {//锁
-        require(unlocked == 1, 'UniswapV2: LOCKED');
+        require(unlocked == 1, 'error: LOCKED');
         unlocked = 0;
         _;
         unlocked = 1;
@@ -72,7 +72,7 @@ contract Pair is iPair, ERC20 {
             if (rootK > rootKLast) {
                     uint numerator = totalSupply.mul(rootK.sub(rootKLast));
                     uint denominator = rootK.add(rootKLast);
-                    //1/2
+                    //  1/2
                     uint liquidity = numerator / denominator;
                     if (liquidity > 0) _mint(feeTo, liquidity);
             }
@@ -130,7 +130,9 @@ contract Pair is iPair, ERC20 {
         
         uint balance0;
         uint balance1;
+        {
         
+        }
         
     }
 }
