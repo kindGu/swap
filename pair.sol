@@ -135,4 +135,13 @@ contract Pair is iPair, ERC20 {
         }
         
     }
+    function skim(address to) external lock {
+        address _token0 = token0; 
+        address _token1 = token1; 
+        _safeTransfer(_token0, to, IERC20(_token0).balanceOf(address(this)).sub(reserve0));
+        _safeTransfer(_token1, to, IERC20(_token1).balanceOf(address(this)).sub(reserve1));
+    }
+     function setReserves() external lock {
+        _update(IERC20(token0).balanceOf(address(this)), IERC20(token1).balanceOf(address(this)));
+    }
 }
