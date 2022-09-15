@@ -11,7 +11,7 @@ contract Pair is iPair, ERC20 {
     address public factory;
     address public token0;
     address public token1;
-    uint public constant MINIMUM_LIQUIDITY = 10**3;
+    uint public constant INITIAL_SUPPLY = 10**3;
     uint private reserve0;
     uint private reserve1;
     uint public kLast;
@@ -54,9 +54,10 @@ contract Pair is iPair, ERC20 {
     function _safeTransfer(address token, address to, uint value) private {
         require(token != address(0), "token is 0x0");
         require(to != address(0), "to is 0x0");
-        asser(IERC20(token).Transfer(address(0), to, value));
+        asser(IERC20(token).Transfer(address(this), to, value));
     }
-    function setReserves(uint balance0, uint balance1) private {
+    
+    function setReserves(uint balance0, uint balance1) external lock {
         require(balance0 <= uint(-1) && balance1 <= uint(-1), 'error: overflow');
         reserve0 = uint(balance0);
         reserve1 = uint(balance1);
@@ -88,7 +89,7 @@ contract Pair is iPair, ERC20 {
         
         uint _totalSupply = totalSupply;
         if (_totalSupply == 0) {
-            _mint();
+            _mint(msg.sender, INITIAL_SUPPLY);
         } else {
             liquidity = Math.min(amount0.mul(_totalSupply) / _reserve0, amount1.mul(_totalSupply) / _reserve1);
             //S = min(amount0 * totaSupply / reserue0, amount1 * totaSupply / reserue1;
@@ -98,7 +99,6 @@ contract Pair is iPair, ERC20 {
         
         setReserves(balance0, balance1);
         kLast = uint(reserve0).mul(reserve1);
-        //更新储备
         emit Mint(msg.sender, amount0, amount1);
     }
     function burn(address to) external lock returns (uint amount0, uint amount1) {
@@ -130,10 +130,28 @@ contract Pair is iPair, ERC20 {
         
         uint balance0;
         uint balance1;
-        {
+        {//乐观交换, 如果余额不够, 则回退
+        address _token0 = token0;
+        address _token1 = token1;
+        require(to != _token0 && to != _token1, 'error: address error');
+        if (amount0Out > 0) _safeTransfer(_token0, to, amount0Out); 
+        if (amount1Out > 0) _safeTransfer(_token1, to, amount1Out); 
         
+        balance0 = IERC20(_token0).balanceOf(address(this));
+        balance1 = IERC20(_token1).balanceOf(address(this));
+        }
+        //通过balance和reserve的差值，可以反推出输入的代币数量
+        uint amount0In = balance0 > _reserve0 - amount0Out ? balance0 - (_reserve0 - amount0Out) : 0;
+        uint amount1In = balance1 > _reserve1 - amount1Out ? balance1 - (_reserve1 - amount1Out) : 0;
+        require(amount0In > 0 || amount1In > 0, 'error: input Insufficient');
+        { 
+        uint balance0Adjusted = balance0.mul(1000).sub(amount0In.mul(3));
+        uint balance1Adjusted = balance1.mul(1000).sub(amount1In.mul(3));
+        require(balance0Adjusted.mul(balance1Adjusted) >= uint(_reserve0).mul(_reserve1).mul(1000**2), 'error: go back');
         }
         
+        _update(balance0, balance1, _reserve0, _reserve1);
+        emit Swap(msg.sender, amount0In, amount1In, amount0Out, amount1Out, to);
     }
     function skim(address to) external lock {
         address _token0 = token0; 
@@ -141,7 +159,5 @@ contract Pair is iPair, ERC20 {
         _safeTransfer(_token0, to, IERC20(_token0).balanceOf(address(this)).sub(reserve0));
         _safeTransfer(_token1, to, IERC20(_token1).balanceOf(address(this)).sub(reserve1));
     }
-     function setReserves() external lock {
-        _update(IERC20(token0).balanceOf(address(this)), IERC20(token1).balanceOf(address(this)));
-    }
+
 }
