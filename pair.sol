@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/utils/math/Math.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "./iPir.sol";
+import "./iPair.sol";
 import "./iFactory.sol";
 
 contract Pair is iPair, ERC20 {
@@ -30,7 +30,7 @@ contract Pair is iPair, ERC20 {
         uint amount1Out,
         address indexed to
     );
-    event Sync(uint112 reserve0, uint112 reserve1); 
+    event Sync(uint reserve0, uint reserve1); 
     
     uint private unlocked = 1;
     modifier lock() {//锁
@@ -67,7 +67,7 @@ contract Pair is iPair, ERC20 {
     }
     
     function _mintFee(uint112 _reserve0, uint112 _reserve1) private{
-        address feeTo = IFactory(factory).feeTo();
+        address feeTo = iFactory(factory).feeTo();
         uint _kLast = kLast;
         if (_kLast != 0) {
             uint rootK = Math.sqrt(uint(_reserve0).mul(_reserve1));
