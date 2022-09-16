@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/utils/math/Math.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./iPir.sol";
-import "./ifactory.sol";
+import "./iFactory.sol";
 
 contract Pair is iPair, ERC20 {
     address public factory;
@@ -16,7 +16,7 @@ contract Pair is iPair, ERC20 {
     uint private reserve1;
     uint public kLast;
     //更新
-    
+    bytes4 private constant SELECTOR = bytes4(keccak256(bytes('transfer(address,uint256)')));
     event Mint(address indexed sender, uint amount0, uint amount1);
     event Burn(address indexed sender, uint amount0, uint amount1, address indexed to);
     event Swap(
@@ -52,9 +52,8 @@ contract Pair is iPair, ERC20 {
     }
     
     function _safeTransfer(address token, address to, uint value) private {
-        require(token != address(0), "token is 0x0");
-        require(to != address(0), "to is 0x0");
-        asser(IERC20(token).Transfer(address(this), to, value));
+        (bool success, bytes memory data) = token.call(abi.encodeWithSelector(SELECTOR, to, value));
+        require(success && (data.length == 0 || abi.decode(data, (bool))), 'error: Transfer fail');
     }
     
     function setReserves(uint balance0, uint balance1) external lock {
@@ -150,7 +149,7 @@ contract Pair is iPair, ERC20 {
         require(balance0Adjusted.mul(balance1Adjusted) >= uint(_reserve0).mul(_reserve1).mul(1000**2), 'error: go back');
         }
         
-        _update(balance0, balance1, _reserve0, _reserve1);
+        setReserves(balance0, balance1);
         emit Swap(msg.sender, amount0In, amount1In, amount0Out, amount1Out, to);
     }
     function skim(address to) external lock {
