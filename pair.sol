@@ -17,6 +17,9 @@ contract Pair is iPair, ERC20 {
     uint public kLast;
     //更新
     bytes4 private constant SELECTOR = bytes4(keccak256(bytes('transfer(address,uint256)')));
+    uint public price0CumulativeLast;
+    uint public price1CumulativeLast;
+    
     event Mint(address indexed sender, uint amount0, uint amount1);
     event Burn(address indexed sender, uint amount0, uint amount1, address indexed to);
     event Swap(
