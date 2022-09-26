@@ -141,6 +141,9 @@ S = min(amount0 * totaSupply / reserue0, amount1 * totaSupply / reserue1;
 swap函数实现两种代币的兑换，在一个交易池内有两个方向的swap,
 可以从TokenA换到TokenB，或者TokenB换到TokenA。
 
+一, 拥有A/B, C/D, 但需要将A兑换成D, 则将按照WETH来进行兑换, 每兑换一次收取一次手续费。
+二, 以uniswap为接口, 在uniswap上进行兑换, 但手续费将会增加许多, 
+
 getAmountOut确定需要兑换的金额， 
 
 在不做swap之前，balance应该和reserve相等的。
