@@ -1,5 +1,7 @@
 REMIX DEFAULT WORKSPACE
 
+已通过编译
+
 Remix default workspace is present when:
 i. Remix loads for the very first time 
 ii. A new workspace is created with 'Default' template
