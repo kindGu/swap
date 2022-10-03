@@ -97,6 +97,16 @@ function output(uint amount, uint reservein, uint reserveout)returns(uint){
   }
 ```
 
+```
+getAmountOut
+x = reserve0, y = reserve1;
+k = reserve0 * reserve0;
+// 交换时必须保证 k 不变
+newReserve0 = amountIn + reserve0;
+newReserve1 = k / newReserve0;
+amountOut = reserve1 - newReserve1;
+
+```
 ## 如何计算发放给团队的手续费数量
 由于在每一笔的swap上，手续费都会累次增加（ √k ），
 而对比 t1 与 t2 时刻的 √k1 和 √k2 ,其差值就是 t1 与 t2 时刻的手续费，
