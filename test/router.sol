@@ -15,4 +15,17 @@ contract Router{
         factory = _factory;
         WETH = _WETH;
     }
+    
+    function _addLiquidity(
+      address tokenA,
+      address tokenB,
+      uint ADesired,
+      uint BDesired,
+      uint Amin,
+      uint Bmin) internal virtual returns (uint amountA, uint amountB){
+          if(iFactory(factory).getPair(tokenA, tokenB) == address(0)){
+            iFactory(factory).createPair(tokenA, tokenB);
+          }
+          //排序
+      }
 }
